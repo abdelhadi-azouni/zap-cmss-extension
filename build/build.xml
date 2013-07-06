@@ -199,7 +199,7 @@
                 <echo file="${versions.file}" append="true">&lt;ZAP></echo>
                 
                 <!-- 'Standard' addons (keep in alphabetical order ;) -->
-                <antcall target="build-addon"><param name="addon" value="ascanrulesAlpha"/></antcall>
+                <antcall target="build-addon"><param name="addon" value="cmss"/></antcall>
                 <antcall target="build-addon"><param name="addon" value="diff"/></antcall>
                 <antcall target="build-addon"><param name="addon" value="highlighter"/></antcall>
                 <antcall target="build-addon"><param name="addon" value="mitmconf"/></antcall>
@@ -212,7 +212,7 @@
 
         </target>
 
-        <target name="deploy-extension" description="deploy the specified extension">
+        <target name="deploy-cmss" description="deploy CMSS extension">
                 <copy todir="${zap.plugin.dir}">
                         <fileset dir="${dist}">
                         <include name="${extension}-*.zap"/>
@@ -222,7 +222,7 @@
         </target>
 
         <target name="deploy-ascanrulesAlpha" depends="build-all" description="deploy the active scan rules">
-                <antcall target="deploy-extension"> <param name="extension" value="ascanrulesAlpha"/> </antcall>
+                <antcall target="deploy-cmss"> <param name="extension" value="cmss"/> </antcall>
         </target>
 
         <target name="deploy-diff" depends="build-all" description="deploy the diff extension">
@@ -237,8 +237,8 @@
                 <antcall target="deploy-extension"> <param name="extension" value="mitmconf"/> </antcall>
         </target>
 
-        <target name="deploy-pscanrulesAlpha" depends="build-all" description="deploy the passive scan rules">
-                <antcall target="deploy-extension"> <param name="extension" value="pscanrulesAlpha"/> </antcall>
+        <target name="deploy-cmssAlpha" depends="build-all" description="deploy cmss extension">
+                <antcall target="deploy-extension"> <param name="extension" value="cmssAlpha"/> </antcall>
         </target>
 
         <!--target name="deploy-siteTools" depends="build-all" description="deploy the SiteTools extension">
