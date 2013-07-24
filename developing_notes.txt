@@ -1,1 +1,2 @@
 joomla.xml is not in its place, should be in db/joomla/joomla.xml
+I didnt added yet dependences into git repo ; they are: jsoup1.7.2 ,json-simple-1.1.1 , jdom-2.0.5 and jython . Check the wiki
