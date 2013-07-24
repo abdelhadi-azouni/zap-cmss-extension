@@ -17,12 +17,15 @@ import org.jdom.input.SAXBuilder;
 
 
 public class CMSFingerprinter {
-  /**
+	
+	
+	/**
 	 *  Use BlindElephant DB to fingerprint webapp
 	 * @throws IOException 
 	 * @throws NoSuchAlgorithmException 
 	 * 
 	 */
+	/*
 	public static void FingerprintFileBE(URL url) throws IOException, NoSuchAlgorithmException{
 		
 		try {
@@ -38,7 +41,7 @@ public class CMSFingerprinter {
 				URL filePath = new URL(url.toString()+path);
 				int len = url.toString().length();
 				String urlF = url.toString().substring(0, len-1);
-				//System.out.println("path == "+urlF+path);
+				System.out.println("path == "+urlF+path);
 				URLConnection con = filePath.openConnection();
 				if (con.getContentLength()!= -1){
 					String chksum = checkUrlContentChecksoms(filePath);
@@ -68,7 +71,9 @@ public class CMSFingerprinter {
 			e.printStackTrace();
 		}
 		
-	}
+	}*/
+	
+	
 	/**
 	 * 
 	 * @param url
@@ -77,11 +82,16 @@ public class CMSFingerprinter {
 	 */
 	public static InputStream getFileFromUrl(URL url) throws IOException{
 		
-			InputStream is = url.openStream();
+		InputStream is = null;
+		try{
+			is= url.openStream();
 			File file = new File(url.getPath());
-			System.out.println("filename = "+file.getName());
+			//System.out.println("filename = "+file.getName());
 			FileOutputStream out = new FileOutputStream(file.getName());
-		
+		}
+		catch(Exception e){
+			//e.printStackTrace();
+		}
 		
 		/**
 		 * some stuff to do here with 'out'
@@ -112,7 +122,7 @@ public class CMSFingerprinter {
 	 */
 	public static String checkUrlContentChecksoms(URL url) throws IOException{
 		String chksum = checkSumApacheCommons(getFileFromUrl(url));
-		System.out.println(chksum);
+		//System.out.println(chksum);
 		return chksum;
 	}
 
