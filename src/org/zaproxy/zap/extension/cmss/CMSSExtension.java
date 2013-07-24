@@ -6,7 +6,7 @@ import java.security.NoSuchAlgorithmException;
 
 
 public class CMSSExtension {
-  /**
+	/**
 	 * 
 	 * @param args
 	 * @throws Exception 
@@ -15,10 +15,20 @@ public class CMSSExtension {
 		//CMSSBddUtils.pkl2xml();
 		//CMSFingerprinter.checkUrlContentChecksoms(new URL("https://weblogs.java.net/blog/kohsuke/archive/2007/04/how_to_convert.html"));
 		//CMSFingerprinter.FingerprintFileBE(new URL("http://www.joomla.fr/"));
-	    WebAppGuesser.guessApps(new URL("https://weblogs.java.net/blog/kohsuke/archive/2007/04/how_to_convert.html"));
+	    
+		
+		
+		//WebAppGuesser.checkIfExist(new URL("http://www.joomla.fr"), "/images/joomla_logo_black.jpg");
+		//WebAppGuesser.setUrlToGuess(new URL("http://www.lemelies.net/"));		
+		WebAppGuesser.guessApps(new URL("http://www.lemelies.net/"));
+		//WebAppGuesser.fingerPrintFile("joomla");
+		
+		
 		//Wappalyzer.essaie();
-	//--->Wappalyzer.analyse(new URL("http://www.buinzoo.cl/"));
+	//---->Wappalyzer.analyse(new URL("http://www.brooklynjuggler.com/"));
 		//Wappalyzer.bddUpdate();
+		//PlunginGuesser.getWordpressThemeDB();
+		//PlunginGuesser.wordpressComponentLister(new URL("http://cse-club.org/"),"plugin");
 		
 	//--->WebPage wp = new WebPage(new URL("https://weblogs.java.net/blog/kohsuke/archive/2007/04/how_to_convert.html"));
 		//System.out.println(""+wp.getHeaders());
