@@ -10,9 +10,18 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.jdom2.Document;
 
 public class PlunginGuesser {
-  
+	
+	
+	/**
+	 * 
+	****** this is will be modular , each app with its own plugin
+	 */
 	
 	// I will start with specific wabaaps, CMSs first
 	// and joomla first
@@ -57,8 +66,7 @@ public class PlunginGuesser {
 	}
 	
 	
-	// on doit dabord decider avec simon si on doit modifier les raw files 
-	// en autre format pour l'unification (car ceux de wp existent aussi sont en xml)
+	
 	public static void prepareJoomlaPluginDB(){
 		//pending
 	}
@@ -69,6 +77,9 @@ public class PlunginGuesser {
 	// celle de fuzz contient le chemin du plugin a partir de l'url : /component/nom_plugin ..
 	// celle de wp scan contirnt que le nom
 	// donc il faut combiner combiner (-_-)
+	
+	// I noted that wpscan files contain better list of plugins 
+	// so TODO: decide if we continue to use fuzzdb or use wpscan files or combine
 	
 	public static void getJoomlaPluginDB() throws IOException{
 		URL website = new URL("https://fuzzdb.googlecode.com/svn/trunk/Discovery/PredictableRes/CMS/joomla_plugins.fuzz.txt");
@@ -89,7 +100,7 @@ public class PlunginGuesser {
 	
 	
 	
-	//wp part
+	//wordpress part
 	public static void wordpressComponentLister(URL url, String componentType){
 		try{
 			InputStream flux = null;
@@ -120,6 +131,14 @@ public class PlunginGuesser {
 					conx.setRequestMethod("HEAD");
 					if(conx.getResponseCode() == HttpURLConnection.HTTP_OK){
 						System.out.println("------------> readme exists !!");
+						Document doc = (Document) conx.getContent();
+						Pattern p = Pattern.compile("Stable tag: (.+)");
+						Matcher m = p.matcher(doc.toString());
+    					while(m.find()){
+    						
+    						System.out.println("  version :   "+m.group(0));
+    						
+    					}
 					}
 				}
 			}
@@ -129,9 +148,7 @@ public class PlunginGuesser {
 			System.out.println(e.toString());
 		}
 	}	
-	
 
-	//wp part
 	public static void getWordpressPluginDB() throws IOException{
 		URL website = new URL("https://fuzzdb.googlecode.com/svn/trunk/Discovery/PredictableRes/CMS/wp_plugins.fuzz.txt");
 	    ReadableByteChannel rbc = Channels.newChannel(website.openStream());
@@ -147,7 +164,7 @@ public class PlunginGuesser {
 	    fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
 	}
 	
-	
+	// drupal part 
 	public static void drupalComponentLister(URL url, String componentType){
 		try{
 			InputStream flux = null;
@@ -187,15 +204,6 @@ public class PlunginGuesser {
 			System.out.println(e.toString());
 		}
 	}
-	
-	
-	
-	
-	// using fuzzdb from googlecode.com 
-	// j'ai remarqué que la base de wp scan est plus riche avec une difference de format 
-	// celle de fuzz contient le chemin du plugin a partir de l'url : /component/nom_plugin ..
-	// celle de wp scan contirnt que le nom
-	// donc il faut combiner combiner (-_-)
 	
 	public static void getDrupalPluginDB() throws IOException{
 		URL website = new URL("https://fuzzdb.googlecode.com/svn/trunk/Discovery/PredictableRes/CMS/drupal_plugins.fuzz.txt");
