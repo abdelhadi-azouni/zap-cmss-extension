@@ -1,0 +1,1 @@
+joomla.xml is not in its place, should be in db/joomla/joomla.xml
