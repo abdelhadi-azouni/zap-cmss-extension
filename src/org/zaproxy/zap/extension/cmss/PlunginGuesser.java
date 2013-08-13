@@ -1,4 +1,4 @@
-package org.zaproxy.zap.extension.cmss;
+package org.zaproxy.zap.extension.CMSS;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
