@@ -1,19 +1,21 @@
-package org.zaproxy.zap.extension.cmss;
+package org.zaproxy.zap.extension.CMSS;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
-import java.net.URLConnection;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
+import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
 
 
 public class CMSFingerprinter {
@@ -74,6 +76,9 @@ public class CMSFingerprinter {
 	}*/
 	
 	
+	
+		
+		
 	/**
 	 * 
 	 * @param url
@@ -125,5 +130,16 @@ public class CMSFingerprinter {
 		//System.out.println(chksum);
 		return chksum;
 	}
+	
+	
+	// semble qu'elle fonctionne mais j'ai pas bien testé 
+	public static String checksum(byte[] octets) throws UnsupportedEncodingException, NoSuchAlgorithmException{
+		final MessageDigest messageDigest = MessageDigest.getInstance("MD5");
+		messageDigest.reset();
+		messageDigest.update(octets);
+		final byte[] resultByte = messageDigest.digest();
+		return new String(Hex.encodeHex(resultByte));
+	}
+	
 
 }
