@@ -1,13 +1,17 @@
-package org.zaproxy.zap.extension.cmss;
+package org.zaproxy.zap.extension.CMSS;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
+import org.apache.commons.codec.DecoderException;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -15,20 +19,15 @@ import org.jdom.input.SAXBuilder;
 
 public class WebAppGuesser {
 	
-	
-	
-	
+
 	/**
 	 *************** TODO method checkIfExist ---> to support : url+/blabla/+lien
 	 */
-	
-	
 
 	private static URL urlToGuess ;
 	
-	
-	/**
-	 * path to the fast guessing used file
+	/*
+	 * Path to the fast guessing used file
 	 * the fast guessing consists on use a number of detector files (those of BlinElephant)
 	 * to check the name of the webapp, and not the version 
 	 */
@@ -52,8 +51,10 @@ public class WebAppGuesser {
 	* @return
 	* @throws MalformedURLException
 	* @throws IOException
+	 * @throws NoSuchAlgorithmException 
+	 * @throws DecoderException 
 	*/
-	public static ArrayList<String> guessApps(URL urlToGuess) throws MalformedURLException, IOException{
+	public static ArrayList<String> guessApps(URL urlToGuess) throws MalformedURLException, IOException, NoSuchAlgorithmException, DecoderException{
 			ArrayList<String> guessedApps = new ArrayList<String>();
 			Document doc = getFastGuessBDD(fastAppGuessBD);  
 			Element racine = doc.getRootElement();	
@@ -75,28 +76,17 @@ public class WebAppGuesser {
 						// to fingerprintFile as an argument or ...
 						setUrlToGuess(urlToGuess);
 						// TODO the following call must return a set of versions
-						fingerPrintFile(appName);
-						guessedApps.add(appName);
+						//fingerPrintFile(appName);
+						guessedApps.add(appName.toLowerCase());
 						break;
 					}		
 				}
 			}
 			return guessedApps;	
 		}
-			
-	
-	
-	
-		// c'est pour le cas ou un path existe dans plusieurs apps (path non unique)
-		// donc on retourne une liste puis on effectue une recheche plus precise 
-		// en comparant avec wappalyzer ou encre en applicant guessVersion 
-		public static List<String> guessApps(){
-			
-			return null;
-		}
-	
 		
-	public static void fingerPrintFile(String appName) throws MalformedURLException, IOException{
+	public static ArrayList<String> fingerPrintFile(String appName) throws MalformedURLException, IOException, NoSuchAlgorithmException, DecoderException{
+		ArrayList<String> versions = new ArrayList<String>();
 		boolean stop = false;
 		Document doc = loadFingerPrintingDB((appName2dbPath(appName)));
 		Element racine = doc.getRootElement();
@@ -104,7 +94,7 @@ public class WebAppGuesser {
 			Element file = (Element)racine.getChildren().get(i);
 			String path = file.getAttributeValue("path");
 			if(checkIfExist(urlToGuess, path)){
-				//System.out.println("path that match = "+path);
+				System.out.println("path that match = "+path);
 				
 				//-------------------------------------------------
 				//TODO here i must introduce accuracy
@@ -114,26 +104,72 @@ public class WebAppGuesser {
 				for (int j=0;j<file.getChildren().size();j++){
 					Element hashNode = (Element) file.getChildren().get(j);
 					String hash = hashNode.getAttributeValue("md5");
-						String chksum = 
-								CMSFingerprinter.checkUrlContentChecksoms(
-										new URL(urlToGuess.toString()+path));
-						System.out.println("hash = "+hash);
-						System.out.println("chksum = "+chksum);
-						if (hash.compareTo(chksum)==0){
-							stop=true;
-							System.out.println("hhhhhhhh");
-							for(int k= 0 ;k<hashNode.getChildren().size();k++){
-								Element versionNode = (Element)hashNode.getChildren().get(k);
-								String version= versionNode.getValue();
-								System.out.println("		version=="+version);
-							}
-							break; // parceque un fichier sur le net n'a pas deux hashes
+					/*String chksum = 
+							CMSFingerprinter.checkUrlContentChecksoms(
+									new URL(urlToGuess.toString()+path));*/
+					/*String chksum = CMSFingerprinter.
+							checksum(wp.getDocument()+urlToGuess.toString()+path);*/
+				        
+					    
+					// We convert the url content and the file path into byte arrays, then
+					// we concatenate them, then we calculate its checksum
+					byte[] octets1 = new byte[0];
+					CMSFingerprinter.getFileFromUrl(new URL(urlToGuess+path)).read(octets1);
+					byte[] octets2 = path.getBytes(); // doit etre avant la boucle for
+					byte[] c = new byte[octets1.length + octets2.length];
+					System.arraycopy(octets1, 0, c, 0, octets1.length);
+					System.arraycopy(octets2, 0, c, octets1.length, octets2.length);
+					String chksum = CMSFingerprinter.checksum(c);
+				 
+					System.out.println("hash = "+hash);
+					System.out.println("chksum = "+chksum);
+					if (hash.compareTo(chksum)==0){
+						stop=true;
+						System.out.println("hhhhhhhh");
+						ArrayList<String> pathAssociatedVerions = new ArrayList<String>();
+						for(int k= 0 ;k<hashNode.getChildren().size();k++){	
+							Element versionNode = (Element)hashNode.getChildren().get(k);
+							String version= versionNode.getValue();
+							version = version.substring(0, 3);
+							if(!pathAssociatedVerions.contains(version)){
+								pathAssociatedVerions.add(version);
+							}									
+							System.out.println("		version=="+version);
+						}
+						for(String app:pathAssociatedVerions){
+							versions.add(app);
 						}	
+						break; // parceque un fichier sur le net n'a pas deux hashes
+					}			
 				}
-				if (stop)/* break*/; //  should analyze all files 
+				if (stop) /*break*/; //  should analyze all files
 			}
 			else /*System.out.println("dont exist !!")*/;
 		}
+		HashMap<String,Integer> calculList = new HashMap<String,Integer>();
+		ArrayList<String> finalResult = new ArrayList<String>();
+		for(String version:versions){
+			if(calculList.containsKey(version)){
+				int nbr = calculList.get(version);
+				calculList.remove(version);
+				calculList.put(version, nbr+1);
+			}
+			else{
+				calculList.put(version, 1);
+			}
+		}
+		int max = 1 ;
+		for(Entry<String, Integer> entry : calculList.entrySet()){
+			int occ = entry.getValue();
+			if(occ>max){
+				max = occ;
+				System.out.println(max);
+			}	
+		}
+		for(Entry<String, Integer> entry : calculList.entrySet()){
+			if(entry.getValue()==max) finalResult.add(entry.getKey());
+		}
+		return finalResult;
 	}
 	
 	
@@ -168,7 +204,7 @@ public class WebAppGuesser {
 		/**
 		 * here is defined a naming and locating convention for webapps DBs
 		 */
-		return "db/"+appName+"/"+appName+".xml";
+		return "CMSSdb/"+appName+"/"+appName+".xml";
 	}
 	
 	
