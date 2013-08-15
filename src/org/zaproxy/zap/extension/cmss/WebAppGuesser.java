@@ -1,14 +1,14 @@
-package org.zaproxy.zap.extension.CMSS;
+package org.zaproxy.zap.extension.cmss;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.codec.DecoderException;
@@ -120,7 +120,7 @@ public class WebAppGuesser {
 					System.arraycopy(octets1, 0, c, 0, octets1.length);
 					System.arraycopy(octets2, 0, c, octets1.length, octets2.length);
 					String chksum = CMSFingerprinter.checksum(c);
-				 
+					
 					System.out.println("hash = "+hash);
 					System.out.println("chksum = "+chksum);
 					if (hash.compareTo(chksum)==0){
@@ -142,7 +142,7 @@ public class WebAppGuesser {
 						break; // parceque un fichier sur le net n'a pas deux hashes
 					}			
 				}
-				if (stop) /*break*/; //  should analyze all files
+				if (stop) break; //  should analyze all files
 			}
 			else /*System.out.println("dont exist !!")*/;
 		}
@@ -252,7 +252,16 @@ public class WebAppGuesser {
 		HttpURLConnection  con = (HttpURLConnection) url.openConnection();
 		con.setRequestMethod("HEAD");
 		//System.out.println(con.getResponseCode());
-		if(con.getResponseCode() == HttpURLConnection.HTTP_OK){
+		int responseCode = -917 ;
+		while(responseCode==-917){
+			try{
+				responseCode = con.getResponseCode();
+			}
+			catch(ConnectException e){
+				System.out.println("Retrying to connect");
+			}
+		}
+		if(responseCode == HttpURLConnection.HTTP_OK){
 			//System.out.println("yes");
 			return true;
 		}
