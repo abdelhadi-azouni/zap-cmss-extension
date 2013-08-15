@@ -1,4 +1,4 @@
-package org.zaproxy.zap.extension.CMSS;
+package org.zaproxy.zap.extension.cmss;
 
 
 import java.io.FileNotFoundException;
@@ -82,8 +82,7 @@ public class Wappalyzer {
             		detectedApps.add(appName.toLowerCase());
             		//break;
             	}
-        	}else System.out.println("baz");
-        	
+        	} 	
         }
         /**
         * ****************************************************************
@@ -112,6 +111,7 @@ public class Wappalyzer {
      * @throws IOException
      */
     public static boolean hasApp(JSONObject app, WebPage wp) throws IOException{
+    	System.out.println("has apps ");
     	boolean result = false;
     	Document HTML = wp.getDocument();
     	String url = wp.getURL().toString();
