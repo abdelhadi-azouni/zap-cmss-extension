@@ -1,5 +1,4 @@
-package org.zaproxy.zap.extension.CMSS;
-
+package org.zaproxy.zap.extension.cmss;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -30,6 +29,7 @@ public class WhatToFingerPrintFrame extends JFrame implements ActionListener {
 	public WhatToFingerPrintFrame() {
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setBounds(100, 100, 768, 300);
+		setResizable(false);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
