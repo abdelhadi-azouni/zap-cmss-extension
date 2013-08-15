@@ -1,4 +1,4 @@
-package org.zaproxy.zap.extension.CMSS;
+package org.zaproxy.zap.extension.cmss;
 
 
 
