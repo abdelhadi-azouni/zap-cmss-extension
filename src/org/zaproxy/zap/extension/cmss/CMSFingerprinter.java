@@ -1,4 +1,4 @@
-package org.zaproxy.zap.extension.CMSS;
+package org.zaproxy.zap.extension.cmss;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -8,14 +8,9 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.jdom.Document;
 
 
 public class CMSFingerprinter {
@@ -132,7 +127,7 @@ public class CMSFingerprinter {
 	}
 	
 	
-	// semble qu'elle fonctionne mais j'ai pas bien testé 
+	// semble qu'elle fonctionne mais j'ai pas bien teste 
 	public static String checksum(byte[] octets) throws UnsupportedEncodingException, NoSuchAlgorithmException{
 		final MessageDigest messageDigest = MessageDigest.getInstance("MD5");
 		messageDigest.reset();
