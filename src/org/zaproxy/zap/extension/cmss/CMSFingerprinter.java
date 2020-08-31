@@ -22,8 +22,8 @@ public class CMSFingerprinter {
 	 * @throws NoSuchAlgorithmException 
 	 * 
 	 */
-	/*
-	// @deepalgo
+        // @deepalgo
+
 	public static void FingerprintFileBE(URL url) throws IOException, NoSuchAlgorithmException{
 		
 		try {
@@ -69,7 +69,7 @@ public class CMSFingerprinter {
 			e.printStackTrace();
 		}
 		
-	}*/
+	}
 	
 	
 	
